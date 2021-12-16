@@ -70,3 +70,6 @@ data*.txt
 *data*.txt
 pareto*.txt
 *.dat
+*.drs
+*.vpg
+*.pdf

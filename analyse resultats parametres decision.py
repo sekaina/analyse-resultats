@@ -1,82 +1,26 @@
 import pandas as pd
-header_list=["ep_murs_ext","ep_plancher_haut","ep_plancher_bas","type_fenetre"]
-df=pd.read_csv("pareto_param_gen99.csv", names=header_list)
-print(df['type_fenetre'].value_counts())
-print(df['ep_murs_ext'].value_counts())
-bins_list=[0,10,20,30,40,50]
-#df['ep_murs_ext'].hist(bins=bins_list)
-
 import numpy as np
-import matplotlib
-import matplotlib.path as path
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+header_list=["ep_murs_ext","ep_plancher_haut","ep_plancher_bas","type_fenetre"]
+df_deter=pd.read_csv('./Results_To_Plot/pareto_param_gen99_deter.csv', names=header_list)
+df_nomass=pd.read_csv('./Results_To_Plot/pareto_param_gen99_nomass.csv', names=header_list)
+indiv_deter=len(df_deter)
+indiv_nomass=len(df_nomass)
+print(df_deter['type_fenetre'].value_counts())
+print(df_nomass['type_fenetre'].value_counts())
+print(df_deter['ep_murs_ext'].value_counts())
+print(df_nomass['ep_murs_ext'].value_counts())
+bins_list=np.linspace(10,50,5)
+(df_deter['type_fenetre'].value_counts()*100/indiv_deter).plot.bar()
+(df_nomass['type_fenetre'].value_counts()*100/indiv_nomass).plot.bar()
+#df_deter['ep_murs_ext'].value_counts().plot.bar()
 
+#type_fen=pd.merge(df_deter['type_fenetre'].value_counts()*100/indiv_deter,df_nomass['type_fenetre'].value_counts()*100/indiv_nomass)
+'''
+plt.hist(df_deter['ep_murs_ext'],bins_list,alpha=0.5,label="deter")
+plt.hist(df_nomass['ep_murs_ext'],bins_list,alpha=0.5,label="nomass")
+plt.legend()
 
-# Data to be represented
-# ----------
-properties = ['property 1', 'property 2', 'property 3', 
-              'property 4', 'property 5', 'property 6',
-              'property 7', 'property 8', 'property 9']
-values = np.random.uniform(5,9,len(properties))
-# ----------
-
-
-# Choose some nice colors
-matplotlib.rc('axes', facecolor = 'white')
-
-
-# Make figure background the same colors as axes 
-fig = plt.figure(figsize=(10,8), facecolor='white')
-
-# Use a polar axes
-axes = plt.subplot(111, polar=True)
-
-# Set ticks to the number of properties (in radians)
-t = np.arange(0,2*np.pi,2*np.pi/len(properties))
-plt.xticks(t, [])
-
-# Set yticks from 0 to 10
-plt.yticks(np.linspace(0,10,11))
-
-
-# Draw polygon representing values
-points = [(x,y) for x,y in zip(t,values)]
-points.append(points[0])
-points = np.array(points)
-codes = [path.Path.MOVETO,] + \
-        [path.Path.LINETO,]*(len(values) -1) + \
-        [ path.Path.CLOSEPOLY ]
-_path = path.Path(points, codes)
-_patch = patches.PathPatch(_path, fill=True, color='blue', linewidth=0, alpha=.1)
-axes.add_patch(_patch)
-_patch = patches.PathPatch(_path, fill=False, linewidth = 2)
-axes.add_patch(_patch)
-
-
-# Draw circles at value points
-plt.scatter(points[:,0],points[:,1], linewidth=2,
-            s=50, color='white', edgecolor='black', zorder=10)
-
-# Set axes limits
-plt.ylim(0,10)
-
-
-# Draw ytick labels to make sure they fit properly
-for i in range(len(properties)):
-    angle_rad = i/float(len(properties))*2*np.pi
-    angle_deg = i/float(len(properties))*360
-    ha = "right"
-    if angle_rad < np.pi/2 or angle_rad > 3*np.pi/2: ha = "left"
-    plt.text(angle_rad, 10.75, properties[i], size=14,
-             horizontalalignment=ha, verticalalignment="center")
-
-    # A variant on label orientation
-    #    plt.text(angle_rad, 11, properties[i], size=14,
-    #             rotation=angle_deg-90,
-    #             horizontalalignment='center', verticalalignment="center")
-
-
-# Done
-plt.savefig('radar-chart.png', facecolor='white')
+'''
+#print(type_fen)
 plt.show()

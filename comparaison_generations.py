@@ -40,5 +40,5 @@ axe3.scatter(y_99, z_99, c='c', label='99')
 #plt.colorbar(plot3,ax=axe3,label="Besoins de chauffage kWh/m2")
 
 fig.legend(loc="right")
-plt.savefig('comparaison Front de Pareto_objectifs.png')
+plt.savefig('./graphes/comparaison Front de Pareto_objectifs.png')
 plt.show()

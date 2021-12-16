@@ -35,7 +35,7 @@ plot3 = axe3.scatter(y, z, c=color, alpha=0.5, marker='+')
 
 
 fig.legend(loc="right")
-plt.savefig('Front de Pareto_objectifs.png')
+plt.savefig('./graphes/Front de Pareto_objectifs.png')
 plt.show()
 
 '''
@@ -45,7 +45,7 @@ plt.xlabel("Besoins de chauffage kWh")
 plt.ylabel('Cout global actualisé en euros')
 plt.title('Front de Pareto')
 plt.colorbar(label="Heures d'inconfort (T>Tconf+2°C)")
-plt.savefig('Front de Pareto_objectifs.png')
+plt.savefig('./graphes/Front de Pareto_objectifs.png')
 '''
     
 

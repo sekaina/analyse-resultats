@@ -64,12 +64,12 @@ with open('./Results_To_Plot/pareto_obj_gen99_deter.csv', 'r') as f:
 Pareto_objective_functions_deterministic=Pareto_objective_functions_deterministic.astype('float64')'''
 
 df=pd.read_excel("./Results_To_Plot/exhaustive_sans_surventilation_all_combinaisons.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
-df_array=df[["f1","f2","f3"]].to_numpy()
+df_array=df[["f2","f3"]].to_numpy()
 df_costs_array=df_array.astype('float64')
 is_efficient=is_pareto_efficient_simple(df_costs_array)
 df["efficient"]=is_efficient
 #print(df)
-df[df["efficient"]].to_excel("exhaustive_sans_surventilation_pareto.xlsx",index=False)
+df[df["efficient"]].to_excel("exhaustive_sans_sur_f2_f3_pareto.xlsx",index=False)
 pareto_new=0
 '''for i, a in enumerate(pareto_tot):
     if a :

@@ -200,58 +200,128 @@ def N_solutions_pareto_per_generation():
         dfi= pd.read_csv('./Results_To_Plot/monitoring_deter/pareto_obj_gen'+str(i)+'.csv', header=None)
         #L.append(dfi[0].count)
         print(dfi[0].size)
+def plot_density(df1,df2,df3):
+    fig,axes=plt.subplots(nrows=7,ncols=1)
+    sns.histplot(df1["f1"],ax=axes[0],color='b', label="SF avec surventilation")
+    sns.histplot(df3["f1"],ax=axes[0],color='grey', label="SF sans surventilation")
+    sns.histplot(df2["f1"],ax=axes[0],color='r', label="NoMASS")
+    sns.kdeplot(df1["f2"],ax=axes[1],color='b',shade=True)
+    sns.kdeplot(df2["f2"],ax=axes[1],color='r',shade=True)
+    sns.kdeplot(df3["f2"],ax=axes[1],color='grey',shade=True)
+    sns.kdeplot(df1["f3"],ax=axes[2],color='b',shade=True)
+    sns.kdeplot(df2["f3"],ax=axes[2],color='r',shade=True)
+    sns.kdeplot(df3["f3"],ax=axes[2],color='grey',shade=True)
+    sns.kdeplot(df1["x1"],ax=axes[3],color='b',shade=True)
+    sns.kdeplot(df2["x1"],ax=axes[3],color='r',shade=True)
+    sns.kdeplot(df3["x1"],ax=axes[3],color='grey',shade=True)
+    sns.kdeplot(df1["x2"],ax=axes[4],color='b',shade=True)
+    sns.kdeplot(df2["x2"],ax=axes[4],color='r',shade=True)
+    sns.kdeplot(df3["x2"],ax=axes[4],color='grey',shade=True)
+    sns.kdeplot(df1["x3"],ax=axes[5],color='b',shade=True)
+    sns.kdeplot(df2["x3"],ax=axes[5],color='r',shade=True)
+    sns.kdeplot(df3["x3"],ax=axes[5],color='grey',shade=True)
+    sns.kdeplot(df1["x4"],ax=axes[6],color='b',shade=True)
+    sns.kdeplot(df2["x4"],ax=axes[6],color='r',shade=True)
+    sns.kdeplot(df3["x4"],ax=axes[6],color='grey',shade=True)
+    fig.legend()
+    plt.show()
+def plot_pareto_f1_f3_SF(df,df2,df3,case=1):
+    x = df["f1"]#chauffage
+    y = df["f2"] #inconfort
+    z = df["f3"] #cout
+    x2 = df2["f1"]
+    y2 = df2["f2"] 
+    z2 = df2["f3"] 
+    x3 = df3["f1"]#chauffage
+    y3 = df3["f2"] #inconfort
+    z3 = df3["f3"] #cout
+    fig, ax = plt.subplots()
+    if case==1:
+        zs = np.concatenate([z, z2,z3], axis=0)
+        min_, max_ = zs.min(), zs.max()
+        plot=plt.scatter(x, y, c=z, marker="o", label="SF avec surventilation")
+        plt.clim(min_, max_)
+        plt.scatter(x3, y3, c=z3, marker="P", label="SF sans surventilation")
+        plt.clim(min_, max_)
+        plt.scatter(x2, y2, c=z2, marker="v", label="NoMASS")
+        plt.clim(min_, max_)
+        ax.set_ylabel("Heures d'inconfort")
+        ax.set_xlabel("Besoins de chauffage kWh/(m2.an)")
+        #plt.legend(*plot.legend_elements("sizes", num=6))       
+        fig.colorbar(plot,label="Cout actualisé en euros")
+        ax.legend()
+    if case==2:
+        zs = np.concatenate([y, y2,y3], axis=0)
+        min_, max_ = zs.min(), zs.max()
+        plot=plt.scatter(x, z, c=y, marker="o", label="SF avec surventilation")
+        plt.clim(min_, max_)
+        plt.scatter(x3, z3, c=y3, marker="P", label="SF sans surventilation")
+        plt.clim(min_, max_)
+        plt.scatter(x2, z2, c=y2, marker="v", label="NoMASS")
+        plt.clim(min_, max_)
+        ax.set_ylabel("Cout actualisé en euros")
+        ax.set_xlabel("Besoins de chauffage kWh/(m2.an)")
+        #plt.legend(*plot.legend_elements("sizes", num=6))       
+        fig.colorbar(plot,label="Heures d'inconfort")
+        ax.legend()
+    if case==3:
+        zs = np.concatenate([x, x2,x3], axis=0)
+        min_, max_ = zs.min(), zs.max()
+        plot=plt.scatter(y, z, c=x, marker="o", label="SF avec surventilation")
+        plt.clim(min_, max_)
+        plt.scatter(y3, z3, c=x3, marker="P", label="SF sans surventilation")
+        plt.clim(min_, max_)
+        plt.scatter(y2, z2, c=x2, marker="v", label="NoMASS")
+        plt.clim(min_, max_)
+        ax.set_ylabel("Cout actualisé en euros")
+        ax.set_xlabel("Heures d'inconfort")
+        #plt.legend(*plot.legend_elements("sizes", num=6))       
+        fig.colorbar(plot,label="Besoins de chauffage kWh/(m2.an)")
+        ax.legend()
+    plt.show()
+def plot_3d(df):
+    x = df["f1"]#chauffage
+    y = df["f2"] #inconfort
+    z = df["f3"] #cout
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    ax.scatter(x, y, z, alpha=0.5)
+    plt.show()
 if __name__=="__main__":
-    #deterministic
-    with open('./Results_To_Plot/pareto_obj_gen99_deter.csv', 'r') as f:
-        Pareto_objective_functions_deterministic=np.array(list(csv.reader (f, delimiter=',')))
-    Pareto_objective_functions_deterministic=Pareto_objective_functions_deterministic.astype('float64')
-    with open('./Results_To_Plot/pareto_param_gen99_deter.csv', 'r') as f:
-        Pareto_decision_parametres_deterministic=np.array(list(csv.reader (f, delimiter=',')))
-    Pareto_decision_parametres_deterministic=Pareto_decision_parametres_deterministic.astype('float64')
-
-    #nomass
-    with open('./Results_To_Plot/pareto_obj_gen99_nomass.csv', 'r') as f:
-        Pareto_objective_functions_nomass=np.array(list(csv.reader (f, delimiter=',')))
-    Pareto_objective_functions_nomass=Pareto_objective_functions_nomass.astype('float64')
-    with open('./Results_To_Plot/pareto_param_gen99_nomass.csv', 'r') as f:
-        Pareto_decision_parametres_nomass=np.array(list(csv.reader (f, delimiter=',')))
-    Pareto_decision_parametres_nomass=Pareto_decision_parametres_nomass.astype('float64')
-    df_deterministic = pd.DataFrame({"f1" : Pareto_objective_functions_deterministic[:, 0], 
-                        "f2" :  Pareto_objective_functions_deterministic[:, 1],
-                        "f3" :  Pareto_objective_functions_deterministic[:, 2],
-                        "x1" : Pareto_decision_parametres_deterministic[:, 0],
-                        "x2" : Pareto_decision_parametres_deterministic[:, 1],
-                        "x3" : Pareto_decision_parametres_deterministic[:, 2],
-                        "x4" : Pareto_decision_parametres_deterministic[:, 3]
-                        })
-    df_nomass = pd.DataFrame({"f1" : Pareto_objective_functions_nomass[:, 0], 
-                        "f2" :  Pareto_objective_functions_nomass[:, 1],
-                        "f3" :  Pareto_objective_functions_nomass[:, 2],
-                        "x1" : Pareto_decision_parametres_nomass[:, 0],
-                        "x2" : Pareto_decision_parametres_nomass[:, 1],
-                        "x3" : Pareto_decision_parametres_nomass[:, 2],
-                        "x4" : Pareto_decision_parametres_nomass[:, 3]
-                        })
-    df_nomass_approche= pd.read_excel("./Results_To_Plot/nomass_approche.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
-    df_all_gen_nomass= pd.read_excel("./Results_To_Plot/pareto_all_generations_nomass.xlsx", header=None, names=["x1","x2","x3","x4","f1","f2","f3"])
-    df_all_gen_deter= pd.read_excel("./Results_To_Plot/pareto_all_generations_deter.xlsx", header=None, names=["x1","x2","x3","x4","f1","f2","f3"])
-    df_avec_sur_all_comb=pd.read_excel("./Results_To_Plot/exhaustive_avec_surventilation_all_combinaisons.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    #df_nomass_approche= pd.read_excel("./Results_To_Plot/nomass_approche.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    #df_all_gen_nomass= pd.read_excel("./Results_To_Plot/pareto_all_generations_nomass.xlsx", header=None, names=["x1","x2","x3","x4","f1","f2","f3"])
+    #df_all_gen_deter= pd.read_excel("./Results_To_Plot/pareto_all_generations_deter.xlsx", header=None, names=["x1","x2","x3","x4","f1","f2","f3"])
+    #df_avec_sur_all_comb=pd.read_excel("./Results_To_Plot/exhaustive_avec_surventilation_all_combinaisons.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
     df_avec_sur_pareto=pd.read_excel("exhaustive_avec_surventilation_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_nomass_pareto=pd.read_excel("exhaustive_nomass_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
     df_sans_sur_pareto=pd.read_excel("exhaustive_sans_surventilation_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
-    df_deterministic_model=df_deterministic
-    df_nomass_model=df_nomass
-    df_nomass_approche_model=df_nomass_approche
-    df_deterministic_model["modèle"]="Scénarii fixes"
-    df_nomass_model["modèle"]="NoMASS"
-    df_nomass_approche_model["modèle"]="NoMASS Approché"
-    df_deter_nomass=pd.concat([df_deterministic_model,df_nomass_model])
-    df_deter_nomass_approche=pd.concat([df_deterministic_model,df_nomass_approche_model])
-    df_nomass_nomassApp=pd.concat([df_nomass_approche_model,df_nomass_model])
+    df_avec_sur_f1_f2_pareto=pd.read_excel("exhaustive_avec_sur_f1_f2_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_sans_sur_f1_f2_pareto=pd.read_excel("exhaustive_sans_sur_f1_f2_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_nomass_f1_f2_pareto=pd.read_excel("exhaustive_nomass_f1_f2_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_avec_sur_f1_f3_pareto=pd.read_excel("exhaustive_avec_sur_f1_f3_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_sans_sur_f1_f3_pareto=pd.read_excel("exhaustive_sans_sur_f1_f3_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_nomass_f1_f3_pareto=pd.read_excel("exhaustive_nomass_f1_f3_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_avec_sur_f2_f3_pareto=pd.read_excel("exhaustive_avec_sur_f2_f3_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_sans_sur_f2_f3_pareto=pd.read_excel("exhaustive_sans_sur_f2_f3_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    df_nomass_f2_f3_pareto=pd.read_excel("exhaustive_nomass_f2_f3_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"]) 
+    #df_sans_sur_pareto=pd.read_excel("exhaustive_sans_surventilation_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+    #df_deterministic_model=df_deterministic
+    #df_nomass_model=df_nomass
+    #df_nomass_approche_model=df_nomass_approche
+    #df_deterministic_model["modèle"]="Scénarii fixes"
+    #df_nomass_model["modèle"]="NoMASS"
+    #df_nomass_approche_model["modèle"]="NoMASS Approché"
+    #df_deter_nomass=pd.concat([df_deterministic_model,df_nomass_model])
+    #df_deter_nomass_approche=pd.concat([df_deterministic_model,df_nomass_approche_model])
+    #df_nomass_nomassApp=pd.concat([df_nomass_approche_model,df_nomass_model])
     #print(df_global)
     #sns.pairplot(df_nomass_nomassApp, hue='modèle',palette=["g", "r"],plot_kws={'alpha':0.5})
-    sns.pairplot(df_sans_sur_pareto)
+    #sns.pairplot(df_avec_sur_f1_f3_pareto)
+    #plt.show()
     #sns.pairplot(df_nomass_approche,hue='x4',palette=["C0", "C1", "C2","C3"])
-    plt.show()
+    #plot_pareto_f1_f3_SF(df_avec_sur_f2_f3_pareto,df_nomass_f2_f3_pareto,df_sans_sur_f2_f3_pareto,case=3)
+    plot_density(df_avec_sur_pareto,df_nomass_pareto,df_sans_sur_pareto)
+    #plot_3d(df_avec_sur_pareto)
     #plot_SRC(df_deterministic,df_nomass,df_nomass_approche)
     #all_generations()
     #plot_SRRC(df_deterministic,df_nomass,df_nomass_approche)

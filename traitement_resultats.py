@@ -281,7 +281,7 @@ def plots(df, df2=None, base_solution=None,KS=None, plot2D = True, plot3D = Fals
         from bokeh.resources import INLINE
         hvplot.save(front, 'fronthvplot.html', resources=INLINE)
 
-def comparaison_objectifs_deterministic_nomass(df_deterministic,  df_nomass, plot3D=False, label="front"):
+def comparaison_objectifs_deterministic_nomass(df_deterministic,  df_nomass,df_app, plot3D=False, label="front"):
     """trace les fonctions objectifs des deux fronts de pareto sur la même figure"""
 
     y_deterministic = df_deterministic["besoins de chauffage kWh/m2"]#chauffage
@@ -291,51 +291,33 @@ def comparaison_objectifs_deterministic_nomass(df_deterministic,  df_nomass, plo
     y_nomass = df_nomass["besoins de chauffage kWh/m2"] #chauffage
     x_nomass = df_nomass["Cout global actualisé en euros/m2"] #cout
     z_nomass = df_nomass["heures d'inconfort (T>Tconf+2°C)"] #inconfort
-    type_fen_nomass=df_nomass["type_fenetre"]
+
+    y_app = df_app["besoins de chauffage kWh/m2"] #chauffage
+    x_app = df_app["Cout global actualisé en euros/m2"] #cout
+    z_app = df_app["heures d'inconfort (T>Tconf+2°C)"] #inconfort
+
 
     fig = plt.figure()
     fig.set_size_inches(15,10)
         
     axe1 = plt.subplot2grid((2,2),(0,0))
     axe1.set_ylabel('Cout actualisé en euros/m2')
-    plot1=axe1.scatter(x_deterministic, y_deterministic, c='b', alpha=0.5)# s=(type_fen_deter+1)*10)
-    axe1.scatter(x_nomass, y_nomass,c='r', alpha=0.5)# s=(type_fen_nomass+1)*10)
-    #axe1.scatter(x_nomass_retraite, y_nomass_retraite,c=type_fen_nomass_retraite, alpha=0.5, marker="h")#s=(type_fen_nomass_retraite+1)*10)
-    #axe1.scatter(economic_solution[0][0]/97.5, economic_solution[0][2]/97.5, marker="s", color="red", label="solution 1")
-    #axe1.scatter(efficient_solution[0][0]/97.5, efficient_solution[0][2]/97.5, marker="s", color="k", label="solution 2")
-    #axe1.scatter(comfortable_solution[0][0]/97.5, comfortable_solution[0][2]/97.5, marker="s", color="y", label="solution 3")
-    #plt.colorbar(plot1,ax=axe1,label="Heures d'inconfort (T>Tconf+2°C)")
-
+    axe1.scatter(y_deterministic, x_deterministic, c='b', alpha=0.5)# s=(type_fen_deter+1)*10)
+    axe1.scatter(y_nomass, x_nomass,c='r', alpha=0.5)# s=(type_fen_nomass+1)*10)
+    axe1.scatter(y_app, x_app, c='g', alpha=0.5)
 
     axe2 = plt.subplot2grid((2,2),(1,0))
-    axe2.set_ylabel("Heures d'inconfort (T>Tconf+2°C)")
+    axe2.set_ylabel("Heures d'inconfort")
     axe2.set_xlabel("Besoins de chauffage kWh/m2")
-    plot2=axe2.scatter(x_deterministic, z_deterministic, c='b',alpha=0.5)
+    axe2.scatter(x_deterministic, z_deterministic, c='b',alpha=0.5)
     axe2.scatter(x_nomass, z_nomass,c='r', alpha=0.5)
-    #axe2.scatter(x_nomass_retraite, z_nomass_retraite,c='y', alpha=0.5, s=(type_fen_nomass_retraite+1)*10)
-    #axe2.scatter(economic_solution[0][0]/97.5, economic_solution[0][1], marker="s", color="red")
-    #axe2.scatter(efficient_solution[0][0]/97.5, efficient_solution[0][1], marker="s", color="k")
-    #axe2.scatter(comfortable_solution[0][0]/97.5, comfortable_solution[0][1], marker="s", color="y")
-    #plt.colorbar(plot2,ax=axe2,label="Cout global actualisé en euros")
+    axe2.scatter(x_app, z_app,c='g', alpha=0.5)
 
     axe3 = plt.subplot2grid((2,2),(1,1))
     axe3.set_xlabel("Cout actualisé en euros/m2")
-    plot3 = axe3.scatter(y_deterministic, z_deterministic, c='b', alpha=0.5, label='Scénarii fixes')
-    axe3.scatter(y_nomass, z_nomass,c='r', alpha=0.5, label='NoMASS')
-    #axe3.scatter(y_nomass_retraite, z_nomass_retraite,c='y', alpha=0.5, label='nomass_retraite', s=(type_fen_nomass_retraite+1)*10)
-    #axe3.scatter(economic_solution[0][2]/97.5, economic_solution[0][1], marker="s", color="red")
-    #axe3.scatter(efficient_solution[0][2]/97.5, efficient_solution[0][1], marker="s", color="k")
-    #axe3.scatter(comfortable_solution[0][2]/97.5, comfortable_solution[0][1], marker="s", color="y")
-    #plt.colorbar(plot3,ax=axe3,label="Besoins de chauffage kWh/m2")
-
-    '''
-    if base_solution != None: #.all()
-        axe1.scatter(base_solution[0]/97.5, base_solution[2]/97.5, marker="s", color="blue", label="le cas de référence")
-        axe2.scatter(base_solution[0]/97.5, base_solution[1], marker="s", color="blue")
-        axe3.scatter(base_solution[2]/97.5, base_solution[1], marker="s", color="blue")
-    '''
-    #axe4 = plt.subplot2grid((2,2),(0,1))
-    
+    axe3.scatter(y_deterministic, z_deterministic, c='b', alpha=0.5, label='Scénarii fixes')
+    axe3.scatter(y_nomass, z_nomass,c='r', alpha=0.5, label='NoMASS') 
+    axe3.scatter(y_app, z_app, c='g', alpha=0.5, label='NoMASS Approché')
     fig.legend()
     plt.savefig('./graphes/'+label+'.png')
     if plot3D == True:
@@ -344,7 +326,7 @@ def comparaison_objectifs_deterministic_nomass(df_deterministic,  df_nomass, plo
         ax = plt.axes(projection='3d')#plt.subplot2grid((2,2),(0,1),projection='3d')
         ax.scatter(x_deterministic, y_deterministic, z_deterministic,color='b')#, c= 'b'
         ax.scatter(x_nomass, y_nomass, z_nomass,color='r')#, c= 'r'
-        #ax.scatter(x_nomass_retraite, y_nomass_retraite, z_nomass_retraite, c= 'y', label='nomass_retraite')
+        ax.scatter(x_app, y_app, z_app, c= 'g', label='NoMASS Approché')
         #ax.view_init(-140, 60)
         ax.set_ylabel("besoins de chauffage kWh/m2", size=8)
         ax.set_xlabel("Cout actualisé en euros/m2", size=8)
@@ -843,7 +825,7 @@ ref_solution_deter=[5.1, 147.35 , 158.48]
 ref_solution_nomass=[11.51,135.59, 162.08]
 KS_deter=[4.62,143.85,173.29]
 KS_nomass=[9.53,155.37,173.65]
-def plot_solutions_bar():
+def plot_solutions_obj_bar():
     fig,axes=plt.subplots(nrows=3,ncols=3)
     axes[0,0].bar(["Ref","1","2","3","4","5"],[5.1,9.61,0.65,9.57,3.87,4.62],color=["purple","r","k","y","g","cyan"])#Scénarii fixes
     axes[0,1].bar(["Ref","1","2","3","4","5"],[11.51,20.94,3.98,16.35,13.04,10.55],color=["purple","r","k","y","g","cyan"])#Scénarii fixes simulé avec nomass
@@ -868,8 +850,62 @@ def plot_solutions_bar():
     #15,25,10,0 10,55	137,85	176,61
     axes[2,0].tick_params(labelrotation=90,labelsize=8)
     axes[2,1].tick_params(labelrotation=90,labelsize=8)
-    axes[2,0].tick_params(labelrotation=90,labelsize=8)
-    axes[2,1].tick_params(labelrotation=90,labelsize=8)
+    axes[2,2].tick_params(labelrotation=90,labelsize=8)
+    plt.show()
+def plot_solutions_param_bar():
+    fig,axes=plt.subplots(nrows=1,ncols=4)
+    ep_murs=[["1",10,10],
+      ["2",50,50],
+      ["3",10,10],
+      ["4",20,15],
+      ["5",15,40],
+      ["6",10,10]
+    ]
+    ep_ph=[["1",10,10],
+      ["2",30,40],
+      ["3",10,10],
+      ["4",35,20],
+      ["5",25,35],
+      ["6",10,15]
+    ]
+    ep_pb=[["1",10,10],
+      ["2",50,50],
+      ["3",10,10],
+      ["4",10,10],
+      ["5",10,10],
+      ["6",10,10]
+    ]
+    type_v=[["1",2,2],
+      ["2",0.4,0.4],
+      ["3",0.4,0.4],
+      ["4",2,2],
+      ["5",0.4,1.43],
+      ["6",0.4,1.43]
+    ]
+    df_ep_murs=pd.DataFrame(ep_murs,columns=["Solution","Scénarii fixes","NoMASS"])
+    df_ep_murs.plot(x="Solution", y=["Scénarii fixes","NoMASS"], kind="bar",ax=axes[0],color=["b","r"])
+    df_ep_ph=pd.DataFrame(ep_ph,columns=["Solution","Scénarii fixes","NoMASS"])
+    df_ep_ph.plot(x="Solution", y=["Scénarii fixes","NoMASS"], kind="bar",ax=axes[1],color=["b","r"])
+    df_ep_pb=pd.DataFrame(ep_pb,columns=["Solution","Scénarii fixes","NoMASS"])
+    df_ep_pb.plot(x="Solution", y=["Scénarii fixes","NoMASS"], kind="bar",ax=axes[2],color=["b","r"])
+    df_type_v=pd.DataFrame(type_v,columns=["Solution","Scénarii fixes","NoMASS"])
+    df_type_v.plot(x="Solution", y=["Scénarii fixes","NoMASS"], kind="bar",ax=axes[3],color=["b","r"])
+    axes[0].set_ylabel("ep_murs_ext [cm]")
+    axes[1].set_ylabel("ep_plancher_haut [cm]")
+    axes[2].set_ylabel("ep_plancher_bas [cm]")
+    axes[3].set_ylabel("Uw_vitrage [W/(m2.K)]")
+    axes[0].set_yticks([10,20,30,40,50])
+    axes[1].set_yticks([10,20,30,40,50])
+    axes[2].set_yticks([10,20,30,40,50])
+    '''axes[0].bar(["Ref","1","2","3","4","5"],[10,50,10,20,15,10],color="b",alpha=0.5, label="Scénarii fixes")#Scénarii fixes ["b","b","b","b","b","b"]
+    axes[0].bar(["Ref","1","2","3","4","5"],[10,20,3,16,13,10],color="r", label="NoMASS")#nomass
+    axes[1].bar(["Ref","1","2","3","4","5"],[10,50,10,20,15,10],color="b",alpha=0.5, label="Scénarii fixes")#Scénarii fixes
+    axes[1].bar(["Ref","1","2","3","4","5"],[10,20,3,16,13,10],color="r", label="NoMASS")#
+    axes[2].bar(["Ref","1","2","3","4","5"],[10,50,10,20,15,10],color="b",alpha=0.5, label="Scénarii fixes")#Scénarii fixes
+    axes[2].bar(["Ref","1","2","3","4","5"],[10,20,3,16,13,10],color="r", label="NoMASS")#
+    axes[3].bar(["Ref","1","2","3","4","5"],[10,50,10,20,15,10],color="b",alpha=0.5, label="Scénarii fixes")#Scénarii fixes
+    axes[3].bar(["Ref","1","2","3","4","5"],[10,20,3,16,13,10],color="r", label="NoMASS")#
+    fig.legend()'''
     plt.show()
 #same_cost_min_heating (Pareto_objective_functions,Pareto_decision_parametres, ref_solution)
 #print("la solution ayant le même cout mais moins de chauffage est\n", solution)
@@ -878,7 +914,7 @@ def plot_solutions_bar():
 #plots(df_couple_retraite, base_solution=ref_solution_retraite, plot2D = True, plot3D = True, interactive = False, label="couple_retraite")
 #plots(df_couple_jeune, base_solution=ref_solution_jeune, plot2D = True, plot3D = True, interactive = False, label="couple_actif")
 
-#comparaison_objectifs_deterministic_nomass(df_deterministic,  df_nomass, label="comparaison deter nomass", plot3D=True)
+comparaison_objectifs_deterministic_nomass(df_deterministic,  df_nomass,df_nomass_approche, label="comparaison deter nomass app", plot3D=True)
 #plots(df_deterministic, base_solution=ref_solution_deter, KS=KS_deter, plot2D = True, plot3D = True, interactive = False, label="deter")
 #comparaison_objectifs_jeune_retraite(df_couple_jeune,  df_couple_retraite, label="comparaison jeune retraite")
 #comparaison_param_inconf_deterministic_nomass_norm(df_deterministic,  df_nomass)
@@ -1093,7 +1129,7 @@ def boxplot_pareto(df,df2,df3):
 '''print(find_best_solution(df_deterministic)) #sans normalisation
 print(find_solution_KS(df_deterministic)) #avec normalisation
 print(find_solution_utopia(df_deterministic)) #sans normalisation'''
-#plot_solutions_bar()
+#plot_solutions_param_bar()
 def plot_exhaustive(df1,df2):
     x1 = df1["f1"]#chauffage
     y1 = df1["f2"] #cout
@@ -1122,8 +1158,8 @@ def plot_exhaustive(df1,df2):
     axe3.scatter(y2, z2, c='r', alpha=0.5)
     fig.legend()
     plt.show()
-df_avec_sur_all_comb=pd.read_excel("./Results_To_Plot/exhaustive_avec_surventilation_all_combinaisons.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
+'''df_avec_sur_all_comb=pd.read_excel("./Results_To_Plot/exhaustive_avec_surventilation_all_combinaisons.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
 df_avec_sur_pareto=pd.read_excel("exhaustive_avec_surventilation_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
 df_sans_sur_all_comb=pd.read_excel("./Results_To_Plot/exhaustive_sans_surventilation_all_combinaisons.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
 df_sans_sur_pareto=pd.read_excel("exhaustive_sans_surventilation_pareto.xlsx", header=None, names=["f1","f2","f3","x1","x2","x3","x4"])
-plot_exhaustive(df_sans_sur_all_comb,df_sans_sur_pareto)
+plot_exhaustive(df_sans_sur_all_comb,df_sans_sur_pareto)'''
